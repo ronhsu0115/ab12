@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音頻控制按鈕</title>
+  <!-- 引入 Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container text-center mt-5">
+  <h1>北斗國稅局</h1>
+  
+  <!-- 第一組音頻控制 -->
+  <div class="mt-5">
+    <h2> 請問你需要甚麼幫忙</h2>
+    <audio id="audioPlayer1" src="1.1.m4a" preload="auto"></audio>
+    
+    
+    
+    <div class="mt-4">
+      <button class="btn btn-success" id="playButton1">播放</button>
+      <button class="btn btn-warning" id="pauseButton1">暫停</button>
+      <button class="btn btn-danger" id="stopButton1">停止</button>
+    </div>
+  </div>
+
+  <!-- 第二組音頻控制 -->
+  <div class="mt-5">
+    <h2>你的身分證號碼是幾號</h2>
+    <audio id="audioPlayer2" src="1.2.m4a" preload="auto"></audio>
+    
+    
+    
+    <div class="mt-4">
+      <button class="btn btn-success" id="playButton2">播放</button>
+      <button class="btn btn-warning" id="pauseButton2">暫停</button>
+      <button class="btn btn-danger" id="stopButton2">停止</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- 引入 Bootstrap JS 和必要的 Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // 第一組音頻控制
+  const audioPlayer1 = document.getElementById("audioPlayer1");
+
+  document.getElementById("playButton1").addEventListener("click", () => {
+    audioPlayer1.play();
+  });
+
+  document.getElementById("pauseButton1").addEventListener("click", () => {
+    audioPlayer1.pause();
+  });
+
+  document.getElementById("stopButton1").addEventListener("click", () => {
+    audioPlayer1.pause();
+    audioPlayer1.currentTime = 0;  // 重置播放時間
+  });
+
+  // 第二組音頻控制
+  const audioPlayer2 = document.getElementById("audioPlayer2");
+
+  document.getElementById("playButton2").addEventListener("click", () => {
+    audioPlayer2.play();
+  });
+
+  document.getElementById("pauseButton2").addEventListener("click", () => {
+    audioPlayer2.pause();
+  });
+
+  document.getElementById("stopButton2").addEventListener("click", () => {
+    audioPlayer2.pause();
+    audioPlayer2.currentTime = 0;  // 重置播放時間
+  });
+</script>
+
+</body>
+</html>
