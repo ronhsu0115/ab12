@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>財政部北斗稽徵所</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      .container {
+        flex: 1;
+      }
+      .header-img {
+        text-align: center; /* 確保子元素水平置中 */
+        margin-bottom: 20px;
+      }
+      .header-img img {
+        max-width: 100%;
+        height: auto;
+        display: inline-block; /* 確保圖片能正確與文字區域對齊 */
+      }
+      .card {
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        user-select: none;
+      }
+      .card.playing {
+        transform: scale(1.05);
+        box-shadow: 0px 6px 10px rgba(0, 123, 255, 0.4);
+        border: 2px solid #007bff;
+      }
+      .footer {
+        background-color: #f8f9fa;
+        text-align: center;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        border-top: 1px solid #dee2e6;
+      }
+      .input-group .btn {
+        min-width: 80px;
+      }
+      #search-input {
+        text-align: center; /* 水平置中 */
+      }
+      ::placeholder {
+        text-align: center; /* 置中 */
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container my-1">
+      <img
+        src="headerImg.png"
+        alt=""
+        onclick="document.location.href='index.html'"
+      />
+      <h1 class="mt-2 text-center mb-4 text-primary">北斗稽徵所 門市服務</h1>
+
+      <!-- 搜尋區域 -->
+      <div class="mb-4">
+        <div class="input-group">
+          <button
+            class="btn btn-secondary"
+            type="button"
+            onclick="clearSearch()"
+          >
+            清除
+          </button>
+          <input
+            type="text"
+            id="search-input"
+            class="form-control"
+            placeholder="請輸入標題名稱關鍵字"
+            oninput="searchAudio()"
+          />
+          <button class="btn btn-primary" type="button" onclick="searchAudio()">
+            搜尋
+          </button>
+        </div>
+      </div>
+
+      <!-- MP3 播放清單 -->
+      <div id="mp3-list" class="row g-4 mt-5"></div>
+    </div>
+
+    <!-- 固定頁尾 -->
+    <footer class="footer">
+      <p class="mb-0">開發者：北斗家商商經科</p>
+    </footer>
+
+    <script>
+      // 定義陣列
+      const a = [
+        "歡迎光臨",
+        "請問您有載具嗎",
+        "請問您需要幫助嗎",
+        "請問您刷卡或付現",
+        "需要為您介紹",
+        "請問有會員",
+      ];
+      const b = [
+        "audio/shake1.mp3",
+        "audio/shake2.mp3",
+        "audio/shake3.mp3",
+        "audio/shake4.mp3",
+        "audio/shake5.mp3",
+        "audio/shake1.mp3",
+      ];
+
+      // 動態生成 MP3 播放清單
+      const mp3List = document.getElementById("mp3-list");
+      let currentlyPlayingCard = null; // 記錄當前播放的卡片
+
+      function renderList(filteredIndexes) {
+        mp3List.innerHTML = ""; // 清空清單
+        filteredIndexes.forEach((index) => {
+          const col = document.createElement("div");
+          col.className = "col-md-4";
+
+          col.innerHTML = `
+            <div class="card" id="card-${index}" ondblclick="playAudio(${index})">
+                <div class="card-body">
+                    <h5 class="card-title text-center">${a[index]}</h5>
+                    <audio id="audio-${index}" src="${b[index]}"></audio>
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="btn-group" role="group" aria-label="Control Buttons">
+                            <button class="btn btn-primary" onclick="playAudio(${index})">播放</button>
+                            <button class="btn btn-warning" onclick="pauseAudio(${index})">暫停</button>
+                            <button class="btn btn-danger" onclick="stopAudio(${index})">停止</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          `;
+          mp3List.appendChild(col);
+        });
+      }
+
+      // 初始化載入完整清單
+      renderList(a.map((_, index) => index));
+
+      // 搜尋功能
+      function searchAudio() {
+        const query = document.getElementById("search-input").value.trim();
+        const filteredIndexes = a
+          .map((title, index) => (title.includes(query) ? index : -1))
+          .filter((index) => index !== -1);
+
+        renderList(filteredIndexes); // 根據搜尋結果更新清單
+      }
+
+      // 清除搜尋
+      function clearSearch() {
+        const searchInput = document.getElementById("search-input");
+        searchInput.value = ""; // 清空輸入框
+        renderList(a.map((_, index) => index)); // 重置為完整清單
+      }
+
+      // 共用 JavaScript 控制函式
+      function playAudio(index) {
+        // 停止目前播放的音檔
+        if (currentlyPlayingCard !== null) {
+          const prevCard = document.getElementById(
+            `card-${currentlyPlayingCard}`
+          );
+          const prevAudio = document.getElementById(
+            `audio-${currentlyPlayingCard}`
+          );
+          prevAudio.pause();
+          prevAudio.currentTime = 0;
+          prevCard.classList.remove("playing");
+        }
+
+        // 播放新音檔並標記卡片
+        const audio = document.getElementById(`audio-${index}`);
+        const card = document.getElementById(`card-${index}`);
+        audio.play();
+        card.classList.add("playing");
+        currentlyPlayingCard = index;
+      }
+
+      function pauseAudio(index) {
+        const audio = document.getElementById(`audio-${index}`);
+        audio.pause();
+      }
+
+      function stopAudio(index) {
+        const audio = document.getElementById(`audio-${index}`);
+        const card = document.getElementById(`card-${index}`);
+        audio.pause();
+        audio.currentTime = 0; // 重置音檔到起始點
+        card.classList.remove("playing"); // 移除播放指示
+        if (currentlyPlayingCard === index) {
+          currentlyPlayingCard = null;
+        }
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
